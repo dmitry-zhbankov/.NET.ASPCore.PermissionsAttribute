@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PermissionsAttribute.DAL;
 using PermissionsAttribute.Models;
 
 namespace PermissionsAttribute
@@ -22,7 +23,8 @@ namespace PermissionsAttribute
         {
             CreateHostBuilder(args)
                 .Build()
-                .SeedDatabase()
+                //.SeedDatabase()
+                .MigrateDatabase()
                 .Run();
         }
 
@@ -57,10 +59,32 @@ namespace PermissionsAttribute
             return webHost;
         }
 
+        public static IHost MigrateDatabase(this IHost webHost)
+        {
+            using (var scope = webHost.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+
+                try
+                {
+                    var context = services.GetRequiredService<AppIdentityDbContext>();
+                    var migrator = context.GetInfrastructure().GetService<IMigrator>();
+                    migrator.Migrate();
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while migrating the database.");
+                }
+            }
+            return webHost;
+        }
+
         private static async Task SeedIdentityDb(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             var adminEmail = "admin@mail.com";
             var password = "Admin_1234";
+            
             if (await roleManager.FindByNameAsync("admin") == null)
             {
                 var adminRole = new IdentityRole("admin");
@@ -71,6 +95,7 @@ namespace PermissionsAttribute
                 var userRole = new IdentityRole("user");
                 await roleManager.CreateAsync(userRole);
             }
+
             if (await userManager.FindByNameAsync(adminEmail) == null)
             {
                 var admin = new User { Email = adminEmail, UserName = adminEmail};

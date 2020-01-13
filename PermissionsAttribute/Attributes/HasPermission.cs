@@ -5,7 +5,7 @@ using PermissionsAttribute.Models;
 
 namespace PermissionsAttribute.Controllers
 {
-    public class HasPermission : ActionFilterAttribute,IAuthorizationFilter
+    public class HasPermission : ActionFilterAttribute, IAuthorizationFilter
     {
         private Permission _permission;
 

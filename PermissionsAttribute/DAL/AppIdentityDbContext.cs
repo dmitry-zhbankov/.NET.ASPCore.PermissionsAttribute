@@ -4,12 +4,11 @@ using PermissionsAttribute.Models;
 
 namespace PermissionsAttribute.DAL
 {
-    public class IdentityDbContext : IdentityDbContext<User>
+    public class AppIdentityDbContext : IdentityDbContext<User>
     {
-        public IdentityDbContext(DbContextOptions<IdentityDbContext> options)
+        public AppIdentityDbContext(DbContextOptions<AppIdentityDbContext> options)
             : base(options)
-        {
-            Database.EnsureCreated();
+        {            
         }
     }
 }

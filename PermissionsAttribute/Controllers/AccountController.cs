@@ -14,6 +14,7 @@ namespace PermissionsAttribute.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+
         public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userManager = userManager;
@@ -77,7 +78,7 @@ namespace PermissionsAttribute.Controllers
 
                     return RedirectToAction("Index", "Home");
                 }
-                ModelState.AddModelError("", "Неправильный логин и (или) пароль");
+                ModelState.AddModelError("", "Incorrect loggin or password");
             }
             return View(model);
         }
@@ -88,6 +89,13 @@ namespace PermissionsAttribute.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult AccessDenied(string returnUrl)
+        {
+            ViewBag.ReturnUrl = returnUrl;
+            return View();
         }
     }
 }

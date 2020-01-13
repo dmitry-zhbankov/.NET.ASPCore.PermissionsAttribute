@@ -27,9 +27,9 @@ namespace PermissionsAttribute
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<IdentityDbContext>(options =>
+            services.AddDbContext<AppIdentityDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<IdentityDbContext>();
+            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>();
             services.AddSingleton<IProfileRepository, ProfileRepository>();
             services.AddControllersWithViews();
         }
